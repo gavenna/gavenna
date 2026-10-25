@@ -53,7 +53,7 @@
         font-size="56" font-weight="700" fill="#F8FAFC" letter-spacing="1">把直播间做成可编程的游乐场</text>
 
   <text x="104" y="268" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif"
-        font-size="24" font-weight="400" fill="#94A3B8" letter-spacing="0.5">弹幕与礼物接进状态机 · LLM 接进话术引擎 · 画面交给 Godot</text>
+        font-size="24" font-weight="400" fill="#94A3B8" letter-spacing="0.5">弹幕与礼物接进状态机 · LLM 接进话术引擎 · 画面交给游戏与桌宠</text>
 
   <!-- 标签行 -->
   <g font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="17" font-weight="500">
