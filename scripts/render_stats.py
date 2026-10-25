@@ -52,7 +52,11 @@ def main() -> int:
     stars = int(os.environ.get("STARS", "0"))
     followers = int(os.environ.get("FOLLOWERS", "0"))
     repos = int(os.environ.get("REPOS", "0"))
-    latest = os.environ.get("LATEST", "").strip() or "—"
+    # jq 在仓库列表为空时会把 LATEST 输出成字符串 "null"（而不是空串），
+    # 只判空会让 README 渲染出「最近推送 null」，所以这里同时挡掉 null 字面量。
+    latest = os.environ.get("LATEST", "").strip()
+    if latest.lower() in ("", "null", "none"):
+        latest = "—"
 
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()

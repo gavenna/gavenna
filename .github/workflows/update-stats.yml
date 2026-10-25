@@ -24,9 +24,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          # 超过 100 个仓库时自动翻页（stars 升序抓，第二页只在需要时取）
+          # 首页按 PUSHED_AT 倒序取 100 个仓库，不够时按下方的 while 循环翻页补齐。
           Q='query { user(login: "gavenna") {
                  repositories(first: 100, ownerAffiliations: OWNER, isFork: false,
+                              privacy: PUBLIC,
                               orderBy: {field: PUSHED_AT, direction: DESC}) {
                    totalCount
                    pageInfo { hasNextPage endCursor }
@@ -37,16 +38,26 @@ jobs:
           STARS=$(echo "$R" | jq '[.data.user.repositories.nodes[].stargazerCount] | add // 0')
           REPOS=$(echo "$R" | jq -r '.data.user.repositories.totalCount')
           FOLLOWERS=$(echo "$R" | jq -r '.data.user.followers.totalCount')
-          LATEST=$(echo "$R" | jq -r '[.data.user.repositories.nodes[].pushedAt] | max | split("T")[0]')
+          # 仓库列表为空时 max 得 null，直接 split 会报错并让 LATEST 变成 "null" 字面量，
+          # 所以先过滤 null 再判长度（render_stats.py 侧还挡了一次 "null"）。
+          LATEST=$(echo "$R" | jq -r '[.data.user.repositories.nodes[].pushedAt | select(. != null)] | if length > 0 then (max | split("T")[0]) else "" end')
           HAS_NEXT=$(echo "$R" | jq -r '.data.user.repositories.pageInfo.hasNextPage')
           CURSOR=$(echo "$R" | jq -r '.data.user.repositories.pageInfo.endCursor')
 
-          if [ "$HAS_NEXT" = "true" ]; then
+          # 翻页直到 hasNextPage=false。上限 20 页（2000 个仓库）防死循环。
+          PAGES=1
+          while [ "$HAS_NEXT" = "true" ] && [ "$PAGES" -lt 20 ]; do
             Q2="query { user(login: \"gavenna\") { repositories(first: 100, after: \"$CURSOR\",
-                  ownerAffiliations: OWNER, isFork: false) { nodes { stargazerCount } } } }"
+                  ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
+                    pageInfo { hasNextPage endCursor }
+                    nodes { stargazerCount } } } }"
             R2=$(gh api graphql -f query="$Q2")
             STARS=$(( STARS + $(echo "$R2" | jq '[.data.user.repositories.nodes[].stargazerCount] | add // 0') ))
-          fi
+            HAS_NEXT=$(echo "$R2" | jq -r '.data.user.repositories.pageInfo.hasNextPage')
+            CURSOR=$(echo "$R2" | jq -r '.data.user.repositories.pageInfo.endCursor')
+            PAGES=$(( PAGES + 1 ))
+          done
+          echo "pages=$PAGES"
 
           {
             echo "stars=$STARS"
@@ -64,14 +75,40 @@ jobs:
           LATEST: ${{ steps.stats.outputs.latest }}
         run: python3 scripts/render_stats.py README.md
 
-      - name: Commit if changed
+      - name: Commit if changed (with daily heartbeat)
+        env:
+          STARS: ${{ steps.stats.outputs.stars }}
+          FOLLOWERS: ${{ steps.stats.outputs.followers }}
+          REPOS: ${{ steps.stats.outputs.repos }}
+          LATEST: ${{ steps.stats.outputs.latest }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add README.md
-          if git diff --staged --quiet; then
-            echo "No changes."
-          else
+          if ! git diff --staged --quiet; then
             git commit -m "chore: refresh stats"
             git push
+            exit 0
           fi
+
+          # README 没变——走心跳路径。
+          # GitHub 会在公开仓库连续 60 天无提交活动后自动停用 scheduled workflow，
+          # 而「数值无变化就不提交」恰好会制造这种静默停用（零 star 阶段尤其容易）。
+          # 心跳每天最多写一次，顺带留下「最后一次成功抓取」的可审计痕迹。
+          HB=.github/stats-heartbeat.json
+          TODAY=$(date -u +%Y-%m-%d)
+          PREV=$(jq -r '.date // ""' "$HB" 2>/dev/null || true)
+          if [ "$PREV" = "$TODAY" ]; then
+            echo "No changes."
+            exit 0
+          fi
+
+          mkdir -p .github
+          jq -n --arg date "$TODAY" \
+                --arg stars "${STARS:-0}" --arg followers "${FOLLOWERS:-0}" \
+                --arg repos "${REPOS:-0}" --arg latest "${LATEST:--}" \
+                '{date: $date, stars: $stars, followers: $followers, repos: $repos, latestPush: $latest}' > "$HB"
+          git add "$HB"
+          git commit -m "chore: heartbeat ${TODAY}"
+          git push

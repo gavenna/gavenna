@@ -9,7 +9,8 @@ gavenna-profile/
 ├── README.md                         主页正文（GitHub 渲染在 github.com/gavenna 顶部）
 ├── assets/hero.svg                   顶部横幅，1280×420 矢量图
 ├── scripts/render_stats.py           统计块渲染
-└── .github/workflows/update-stats.yml 每小时刷新统计块
+├── .github/workflows/update-stats.yml 每小时刷新统计块
+└── .github/stats-heartbeat.json      心跳文件（workflow 写入，勿手动编辑）
 ```
 
 ## 统计块怎么工作
@@ -18,7 +19,7 @@ README 里这两行是给机器人用的边界标记，**不要删**：
 
 ```markdown
 <!-- STATS-START -->
-🛠 13 个公开仓库 · 最近推送 2026-10-25
+🛠 12 个公开仓库 · 最近推送 2026-10-25
 <!-- STATS-END -->
 ```
 
@@ -31,6 +32,24 @@ README 里这两行是给机器人用的边界标记，**不要删**：
 **分流规则**：`stars = 0` 时渲染一行文字（0 值徽章是负资产），`stars ≥ 1` 时自动切换成三枚徽章。第一个 star 出现的下一个整点就会跳变，不需要手动改。
 
 手动触发：仓库 → Actions → `Update Stats Badges` → Run workflow。
+
+### 为什么会有 heartbeat 提交
+
+GitHub 会在**公开仓库连续 60 天没有提交活动**后自动停用 scheduled workflow。
+而「数值没变就不提交」在零 star 阶段几乎必然成立——repos 和 followers 都不动，
+workflow 会在两个月后静默死掉，且不会通知你。
+
+所以 README 没变化时，workflow 会在当天首次运行时写 `.github/stats-heartbeat.json`
+并提交一次 `chore: heartbeat YYYY-MM-DD`。它同时是「最后一次成功抓取」的审计痕迹：
+`git log -- .github/stats-heartbeat.json` 就能看出抓取是否连续，比翻 Actions 日志快。
+
+数值真的变了时走原来的 `chore: refresh stats`，不再额外产生心跳提交。
+
+### 仓库数为什么必须过滤 privacy
+
+GraphQL 查询带 `privacy: PUBLIC`。Actions 里的 `GITHUB_TOKEN` 本来就看不到别的私有仓库，
+但换成个人 PAT 或权限变化后，不加这个过滤器会把私有仓库算进「公开仓库」数
+（实测：不带过滤时用 PAT 数到 31 个，公开仓库实际只有 12 个）。
 
 ## 改横幅文字
 
@@ -52,4 +71,6 @@ README 里这两行是给机器人用的边界标记，**不要删**：
 ## 维护提醒
 
 - 每小时的定时任务只能验证"能跑"，验证不了"跑对了"。偶尔去 Actions 看一眼日志里的 `stars=... repos=... latest=...` 是否和主页数字一致。
+- **如果日程任务根本没跑**：`gh run list -R gavenna/gavenna --limit 10`，看 `event` 列有没有 `schedule`。全是 `workflow_dispatch`（手动）说明 cron 没生效——新仓库的 schedule 注册可能延迟一天，等等再看；仍然没有就把 `schedule:` 那两行删掉重新提交一次，强制重新注册。
+- 抓取超出一页时日志里会有 `pages=N`。N 长期为 1 是正常的（仓库没超过 100 个）。
 - workflow 的 token 权限需要 `contents: write`（已写在文件里），改 workflow 时别删。
