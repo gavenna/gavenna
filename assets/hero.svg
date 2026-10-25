@@ -69,8 +69,8 @@
     <rect x="512" y="300" width="158" height="38" rx="19" fill="url(#glass)" stroke="#F472B6" stroke-opacity="0.45"/>
     <text x="591" y="325" fill="#FBCFE8" text-anchor="middle">LLM 话术</text>
 
-    <rect x="682" y="300" width="150" height="38" rx="19" fill="url(#glass)" stroke="#34D399" stroke-opacity="0.45"/>
-    <text x="757" y="325" fill="#A7F3D0" text-anchor="middle">零依赖插件</text>
+    <rect x="682" y="300" width="120" height="38" rx="19" fill="url(#glass)" stroke="#34D399" stroke-opacity="0.45"/>
+    <text x="742" y="325" fill="#A7F3D0" text-anchor="middle">一键启动</text>
   </g>
 
   <!-- 右侧装饰：玻璃卡片 -->
