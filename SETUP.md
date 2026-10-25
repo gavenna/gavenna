@@ -4,7 +4,10 @@
 
 ## 设计原则
 
-主页只展示 **livegame** 一个项目。其它仓库即使 public 也不在主页露出——主页是作品集，不是仓库清单。
+主页只展示 **live-waifu**（主线：弹幕中继 + 游戏 + Live2D 桌宠）和 **livegame**（自研游戏内核的独立仓库）两个项目。
+其它仓库即使 public 也不在主页露出——主页是作品集，不是仓库清单。
+
+**public 白名单（2026-10-25 设定）**：`gavenna`（主页载体，必须 public，否则主页消失）、`gavenna.github.io`（博客）、`live-waifu`、`livegame`。其余 9 个已全部转 private。
 
 ## 文件构成
 
@@ -39,5 +42,8 @@ gavenna-profile/
 - [ ] **填 bio 和 Website** → https://github.com/settings/profile
       Bio 建议：`Godot + Node 做直播间互动系统`　Website：`https://gavenna.github.io`
 - [ ] **清掉 GitHub status**（当前显示「On vacation」，会占住主页描述位）
-- [ ] **给 livegame 写 README** —— `HANDOVER.md` 的「已修复 / assumed / failed_approaches」三分类挪上去就是现成骨架
-- [ ] 其余不展示的仓库：主页已不再链接它们，但它们仍是 public，GitHub 仓库页可见。要彻底不露出需逐个设为 private 或 archive
+- [ ] **给两个仓库填 description**（现在都是空的，从主页点进去看不到一句话介绍）
+      live-waifu 建议：`虚拟主播直播互动套件 — 弹幕中继 + 弹幕游戏 + Live2D 桌宠，抖音直播已跑通闭环`
+      livegame 建议：`自研弹幕阵营对抗游戏内核 — Godot + Node，抖音弹幕接入，打包单 exe`
+- [ ] **live-waifu 的 README 里写着本地绝对路径** `cd D:\Projects\live-waifu`，公开仓库里建议改成相对路径或泛化写法
+- [ ] 其余不展示的仓库已全部转 private；GitHub 仓库页对未登录访客不可见，但你自己登录后仍能看到
