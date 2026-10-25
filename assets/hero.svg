@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 420" width="1280" height="420" role="img" aria-label="gavenna — 把直播间做成可编程的游乐场">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A0F1F"/>
+      <stop offset="55%" stop-color="#101733"/>
+      <stop offset="100%" stop-color="#0B1024"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowC" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F472B6" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#F472B6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="50%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.02"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FFFFFF" stroke-opacity="0.045" stroke-width="1"/>
+    </pattern>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="42"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="420" fill="url(#bg)"/>
+  <rect width="1280" height="420" fill="url(#grid)"/>
+  <ellipse cx="180" cy="60" rx="300" ry="220" fill="url(#glowA)" filter="url(#soft)"/>
+  <ellipse cx="1100" cy="70" rx="320" ry="240" fill="url(#glowB)" filter="url(#soft)"/>
+  <ellipse cx="640" cy="430" rx="420" ry="200" fill="url(#glowC)" filter="url(#soft)"/>
+
+  <rect x="0" y="0" width="1280" height="420" fill="none" stroke="url(#accent)" stroke-opacity="0.28" stroke-width="1"/>
+
+  <!-- 左侧标签条 -->
+  <rect x="72" y="76" width="4" height="268" rx="2" fill="url(#accent)"/>
+
+  <!-- 主标题 -->
+  <text x="104" y="132" font-family="'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif"
+        font-size="30" font-weight="600" fill="#22D3EE" letter-spacing="6">GAVENNA</text>
+
+  <text x="104" y="212" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif"
+        font-size="56" font-weight="700" fill="#F8FAFC" letter-spacing="1">把直播间做成可编程的游乐场</text>
+
+  <text x="104" y="268" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif"
+        font-size="24" font-weight="400" fill="#94A3B8" letter-spacing="0.5">弹幕与礼物接进状态机 · LLM 接进话术引擎 · 画面交给 Godot</text>
+
+  <!-- 标签行 -->
+  <g font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="17" font-weight="500">
+    <rect x="104" y="300" width="118" height="38" rx="19" fill="url(#glass)" stroke="#22D3EE" stroke-opacity="0.45"/>
+    <text x="163" y="325" fill="#A5F3FC" text-anchor="middle">Godot</text>
+
+    <rect x="234" y="300" width="104" height="38" rx="19" fill="url(#glass)" stroke="#60A5FA" stroke-opacity="0.45"/>
+    <text x="286" y="325" fill="#BFDBFE" text-anchor="middle">Node</text>
+
+    <rect x="350" y="300" width="150" height="38" rx="19" fill="url(#glass)" stroke="#A78BFA" stroke-opacity="0.45"/>
+    <text x="425" y="325" fill="#DDD6FE" text-anchor="middle">弹幕链路</text>
+
+    <rect x="512" y="300" width="158" height="38" rx="19" fill="url(#glass)" stroke="#F472B6" stroke-opacity="0.45"/>
+    <text x="591" y="325" fill="#FBCFE8" text-anchor="middle">LLM 话术</text>
+
+    <rect x="682" y="300" width="150" height="38" rx="19" fill="url(#glass)" stroke="#34D399" stroke-opacity="0.45"/>
+    <text x="757" y="325" fill="#A7F3D0" text-anchor="middle">零依赖插件</text>
+  </g>
+
+  <!-- 右侧装饰：玻璃卡片 -->
+  <g opacity="0.9">
+    <rect x="936" y="140" width="268" height="168" rx="16" fill="url(#glass)" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <circle cx="968" cy="176" r="5" fill="#22D3EE"/>
+    <circle cx="988" cy="176" r="5" fill="#60A5FA"/>
+    <circle cx="1008" cy="176" r="5" fill="#A78BFA"/>
+    <g font-family="'Consolas', 'SF Mono', Menlo, monospace" font-size="15" fill="#7DD3FC">
+      <text x="962" y="222">danmaku → battle</text>
+      <text x="962" y="248" fill="#A5B4FC">gift → troop</text>
+      <text x="962" y="274" fill="#C4B5FD">llm → 话术</text>
+    </g>
+  </g>
+
+  <text x="1204" y="392" font-family="'Segoe UI', system-ui, sans-serif" font-size="15"
+        fill="#64748B" text-anchor="end">gavenna.github.io</text>
+</svg>
