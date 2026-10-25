@@ -1,10 +1,26 @@
 <img src="assets/hero.svg" alt="gavenna — 把直播间做成可编程的游乐场" width="100%" />
 
-我把直播间做成可编程的游乐场：弹幕和礼物接进状态机，LLM 接进话术引擎，画面交给 Godot。
+我把直播间做成可编程的游乐场：弹幕和礼物接进状态机，LLM 接进话术引擎，画面交给游戏与桌宠。
 
-## livegame · 直播间互动游戏
+## live-waifu · 虚拟主播直播互动套件
 
-一个能真的开播的互动游戏，不是演示。`直播弹幕 → 兵种与阵营 → 战局结算 → 主播话术播报 → OBS 画面`，整条链路在一个仓库里。画面侧 Godot，链路侧 Node，抖音弹幕接入，打包成单 exe 一键启动。
+真正在跑的那一套。三个独立项目通过 WebSocket 协作，一键拉起，已在抖音直播跑通完整闭环并产生实际收入。
+
+| 组件 | 是什么 |
+|---|---|
+| `danmaku-relay` | B站 / 抖音弹幕中继，可打包成独立 exe。`:8766` WS 广播、`:8767` 控制面板 |
+| `war-danmaku` | 弹幕阵营对抗游戏，Node + Canvas。`:8765` 游戏通信、`:3000` OBS 画面源 |
+| `waifu-agent` | Live2D 桌宠 + AI Agent，Tauri 2 / Rust / React。`:9191` 接收事件做播报 |
+
+`start-all.ps1` 一键拉起全部，`-Stop` 释放端口。
+
+现在实际跑的不是自研游戏——`danmaku-relay/battle` 直接驱动真实 Rusted Warfare，桌宠由中继经 `:9191` 播报战况和观众对话。这个改动把「弹幕改游戏」从写一个游戏变成了接一个游戏。
+
+[仓库](https://github.com/gavenna/live-waifu) · [交接文档](https://github.com/gavenna/live-waifu/blob/main/HANDOVER.md) · [项目工作流](https://github.com/gavenna/live-waifu/blob/main/docs/项目工作流.md) · [直播指令手册](https://github.com/gavenna/live-waifu/blob/main/docs/直播指令手册.md)
+
+## livegame · 自研弹幕游戏内核
+
+`war-danmaku` 的独立仓库版：`直播弹幕 → 兵种与阵营 → 战局结算 → 主播话术播报 → OBS 画面`，整条链路在一个仓库里。画面侧 Godot，链路侧 Node，抖音弹幕接入，打包成单 exe。
 
 它把不确定性也写进了仓库——`HANDOVER.md` 分三类记录：
 
@@ -14,11 +30,9 @@
 | assumed（未逐条验证） | 「LLM 话术代码完整但 `LLM_ENABLED=false`，缺 API Key」「真实弹幕/礼物链路未经实际观众验证」 |
 | failed_approaches | 走不通的路也留着，避免下一轮重新踩 |
 
-配套还有 `PROGRESS.md`，以及按游戏时间线排的话术验收清单——上线前照着听一场，7 条"不通过信号"里任意一条就是系统有问题。
-
 `godot/`　`server/`　`frontend/`　`toolbox/`　`setup.iss`
 
-[仓库](https://github.com/gavenna/livegame) · [交接文档](https://github.com/gavenna/livegame/blob/main/HANDOVER.md) · [使用指南](https://github.com/gavenna/livegame/blob/main/docs/使用指南.md)
+[仓库](https://github.com/gavenna/livegame) · [交接文档](https://github.com/gavenna/livegame/blob/main/HANDOVER.md)
 
 ## 我在这个项目里坚持的三件事
 
